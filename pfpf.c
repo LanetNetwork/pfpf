@@ -201,13 +201,7 @@ pfpf_pool_t* pfpf_init(const int _workers_count, const unsigned short _port, pfp
 	(void)_workers_count;
 	ret->workers_count = 1;
 #else /* defined(_NO_SO_REUSEPORT) */
-	if (_workers_count == -1)
-	{
-		ret->workers_count = sysconf(_SC_NPROCESSORS_ONLN);
-		if (unlikely(ret->workers_count == -1))
-			ret->workers_count = 1;
-	} else
-		ret->workers_count = _workers_count;
+	ret->workers_count = pfcq_hint_cpus(_workers_count);
 #endif /* defined(_NO_SO_REUSEPORT) */
 	debug("Using %d workers\n", ret->workers_count);
 
